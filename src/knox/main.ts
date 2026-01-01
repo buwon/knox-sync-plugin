@@ -60,7 +60,13 @@ export default class KnoxSyncPlugin extends Plugin {
         return
       }
 
-      await provider.fetchGroupList()
+      const groups = await provider.fetchGroupList()
+      for (const group of groups) {
+        if (!vault.getFolderByPath(group.name)) {
+          await vault.createFolder(group.name).catch(() => {})
+        }
+      }
+
       const remote = createRemote(provider)
       await sync(vault, remote, this.app.fileManager)
       console.debug('Sync completed in', Date.now() - startTime, 'ms')
