@@ -85,7 +85,7 @@ export default class KnoxSyncPlugin extends Plugin {
     await this.loadSettings()
 
     // This creates an icon in the left ribbon.
-    this.addRibbonIcon('refresh-ccw-dot', 'Sync with naver', (_evt: MouseEvent) => {
+    this.addRibbonIcon('refresh-ccw-dot', 'Sync with knox', (_evt: MouseEvent) => {
       void this.sync()
     })
 
@@ -148,7 +148,7 @@ export default class KnoxSyncPlugin extends Plugin {
 
   async loadSettings() {
     const DEFAULT_SETTINGS: KnoxSyncPluginSettings = {
-      host: 'https://samsung.net',
+      host: 'http://samsung.net',
       syncInterval: 0,
       onSaveInterval: 0,
     }

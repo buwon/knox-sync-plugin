@@ -1,3 +1,9 @@
+interface ErrorResponseType {
+  errorCode: string
+  errorMessage: string
+  url: string
+}
+
 interface KnoxProjectType {
   projectId: string
   projectName: string
@@ -8,7 +14,7 @@ interface KnoxProjectListType {
   totalPages: number
   pageSize: number
   totalElements: number
-  projects: KnoxProjectType[]
+  elements: KnoxProjectType[]
 }
 
 interface KnoxGroupType {

@@ -1,6 +1,4 @@
-import { requestUrl, RequestUrlParam } from 'obsidian'
 import { BaseProviderType } from '../base'
-import { event } from '../event'
 import { Browser, createBrowser } from '../browser'
 
 const ONE_MONTH_MS = 30 * 24 * 60 * 60 * 1000
@@ -57,52 +55,6 @@ ${lines.join('\n')}
 --`
 }
 
-// 프로젝트 조회
-// GET /pims/todo/rest/v1/project/list?size=100&orderField=CREATE_DATE&orderType=DESC
-
-// 프로젝트 그룹 조회
-// GET /pims/todo/rest/v1/project/{projectId}/group/list
-
-// 그룹의 아이템 조회
-// GET /pims/todo/rest/v1/project/{projectId}/group/todos/list?groupId={groupId}&page=0&size=30&orderField=REG_UPDATE_TIME&orderType=ASCEND&complete=INCLUSION
-
-// 그룹에 아이템 추가
-// POST /pims/todo/rest/v1/project/{projectId}/group/{groupId}/todos/create
-// { subject: string }
-
-// 아이템 조회
-// GET /pims/todo/rest/v1/phase2/todos/{id}?type=ALL&orderType=ASCEND&orderField=REG_UPDATE_TIME
-
-// 아이템 생성
-// POST /pims/todo/rest/v1/phase2/group/{groupId}/todos/create
-// { subject: string }
-
-// 아이템 수정
-// POST /pims/todo/rest/v1/phase2/todos/{id}/inline/update
-// { inlineType: "STATUS", status: "COMPLETED" | "NEED_ACTION" }
-// { inlineType: "CONTENTS", contentsType: 'MIME', contents: "" }
-// { inlineType: "BOOKMARK", bookmarkYn: "Y" | "N" }
-
-/* 
-Content-Transfer-Encoding: base64
-
-xxxxxx (76)
-
-
---
-*/
-
-/*
-$('#TableViewScroll').scrollTop(0, 100);
-$('#TableViewScroll').scrollHeight
-
-$('div[data-rbd-draggable-id="{item.uid}"] .title').click()
-$('#iframe-body-contents').click()
-$('#cafe-note-contents', $('iframe[data-cui-title="edit"]').contentDocument).setHTMLUnsafe('<p><span id="b">{content}</span></p>')
-$('button[aria-label="저장"]').click()
-
-*/
-
 export class KnoxProvider implements BaseProviderType {
   browser: Browser = createBrowser()
   host: string
@@ -131,7 +83,7 @@ export class KnoxProvider implements BaseProviderType {
         headers: {
           'content-type': 'application/json',
         },
-        body: ${JSON.stringify(options.body)},
+        body: JSON.stringify(${JSON.stringify(options.body)}),
       }).then(response => response.json())
     `)
   }
@@ -186,7 +138,7 @@ export class KnoxProvider implements BaseProviderType {
       `/pims/todo/rest/v1/project/list?${params}`,
     )
 
-    const filteredProjects = projList.projects.filter((proj) => proj.projectName.startsWith('+'))
+    const filteredProjects = projList.elements.filter((proj) => proj.projectName.startsWith('+'))
 
     return filteredProjects
   }
@@ -241,7 +193,7 @@ export class KnoxProvider implements BaseProviderType {
       )
 
       for (const item of resp.elements) {
-        taskPromises.push(this.fetchItemInfo(item.uid))
+        taskPromises.push(this.fetchItemInfo(item.uid, group.name))
       }
 
       ++page
@@ -271,15 +223,13 @@ export class KnoxProvider implements BaseProviderType {
     return itemList
   }
 
-  async fetchItemInfo(key: string): Promise<ProviderItemInfoType | null> {
+  async fetchItemInfo(id: string, groupName: string): Promise<ProviderItemInfoType | null> {
     const params = new URLSearchParams({
       type: 'ALL',
       orderType: 'ASCEND',
       orderField: 'REG_UPDATE_TIME',
     }).toString()
-    const task: TaskDetailType = await this.fetch(
-      `/pims/todo/rest/v1/phase2/todos/${key}?${params}`,
-    )
+    const task: TaskDetailType = await this.fetch(`/pims/todo/rest/v1/phase2/todos/${id}?${params}`)
 
     const data = extractText(task.contents)
     if (!data) {
@@ -289,10 +239,9 @@ export class KnoxProvider implements BaseProviderType {
     const [mTime, itemStatus, cTime, size, content] = data
     const status = task.status === 'COMPLETED' ? 'D' : 'N'
 
-    const group = this.groups[task.groupId]
     const info: ProviderItemInfoType = {
       id: task.uid,
-      key: `${group.name}/${task.subject}`,
+      key: `${groupName}/${task.subject}`,
       status,
       cTime: parseInt(cTime),
       mTime: parseInt(mTime),
@@ -346,7 +295,7 @@ export class KnoxProvider implements BaseProviderType {
     const subject = item.key.substring(projectName.length + 1)
 
     const resp: TaskDetailType = await this.fetch(
-      `/pims/todo/rest/v1/phase2/group/${group.id}/todos/create`,
+      `/pims/todo/rest/v1/project/${group.projectId}/group/${group.id}/todos/create`,
       {
         method: 'POST',
         body: {

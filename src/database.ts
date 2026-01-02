@@ -5,7 +5,7 @@ interface State {
   value: number
 }
 
-export const db = new Dexie('naver-sync') as Dexie & {
+export const db = new Dexie('knox-sync') as Dexie & {
   state: EntityTable<State, 'key'>
   file: EntityTable<ItemInfoType, 'key'>
 }

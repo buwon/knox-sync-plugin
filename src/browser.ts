@@ -42,7 +42,7 @@ export class Browser {
     return new Promise((resolve, reject) => {
       const timeoutId = setTimeout(() => {
         reject(new Error('loadURL timeout'))
-      }, 5000)
+      }, 10 * 1000)
 
       this.webContents.once('did-finish-load', () => {
         clearTimeout(timeoutId)

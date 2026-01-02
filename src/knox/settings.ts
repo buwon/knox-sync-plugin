@@ -1,14 +1,5 @@
-import {
-  App,
-  ButtonComponent,
-  PluginSettingTab,
-  Setting,
-  TextComponent,
-  Platform,
-  Notice,
-} from 'obsidian'
+import { App, PluginSettingTab, Setting } from 'obsidian'
 import KnoxSyncPlugin from './main'
-import { createKnoxProvider, KnoxProvider } from './knoxProvider'
 import { event } from '../event'
 
 export interface KnoxSyncPluginSettings {
