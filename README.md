@@ -15,7 +15,7 @@ A plugin that synchronizes Obsidian documents and files using the Knox portal.
 ## Usage
 
 1. Create a new project in Knox portal's "To-Do"
-  The project name must start with +. Example: +Obsidian, +Friends
+   The project name must start with +. Example: +Obsidian, +Friends
 2. Knox Settings → General Settings → Auto login in other browsers → Enable
 3. Install the plugin in your vault's plugin folder
 4. Select "sync start" from the command palette
@@ -37,4 +37,4 @@ A plugin that synchronizes Obsidian documents and files using the Knox portal.
 
 ## Feedback
 
-Please report bugs and request features on GitHub Issues.
+- Please report bugs and request features on GitHub Issues.
