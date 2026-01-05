@@ -24,7 +24,7 @@ export async function generateObsidianPluginManifest() {
     description: packageJSON.description,
     author: 'Buwon Lee',
     authorUrl: 'https://github.com/trinitytime',
-    isDesktopOnly: false,
+    isDesktopOnly: true,
   } satisfies ObsidianPluginManifest
 
   const text = JSON.stringify(manifest, null, 2)
