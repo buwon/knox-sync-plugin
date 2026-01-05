@@ -1,4 +1,5 @@
 import { Notice, Plugin, TFile } from 'obsidian'
+import moment from 'moment'
 import { event } from '../event'
 import { KnoxSettingTab, KnoxSyncPluginSettings } from './settings'
 import { sync } from '../sync'
@@ -84,6 +85,9 @@ export default class KnoxSyncPlugin extends Plugin {
   async onload() {
     await this.loadSettings()
 
+    const statusBarItemEl = this.addStatusBarItem()
+    statusBarItemEl.setText('')
+
     // This creates an icon in the left ribbon.
     this.addRibbonIcon('refresh-ccw-dot', 'Sync with knox', (_evt: MouseEvent) => {
       void this.sync()
@@ -135,6 +139,18 @@ export default class KnoxSyncPlugin extends Plugin {
 
       // When registering intervals, this function will automatically clear the interval when the plugin is disabled.
       this.registerInterval(window.setInterval(() => void this.checkSync(), 10 * 1000))
+      this.registerInterval(
+        window.setInterval(() => {
+          db.state.get('lastSyncTime').then((state) => {
+            const lastSyncTime = state?.value ?? 0
+            if (lastSyncTime > 0) {
+              statusBarItemEl.setText(
+                `Knox Sync: ${moment(lastSyncTime).format('YYYY-MM-DD HH:mm')}`,
+              )
+            }
+          })
+        }, 10 * 1000),
+      )
 
       console.debug('KnoxSyncPlugin loaded')
     })
