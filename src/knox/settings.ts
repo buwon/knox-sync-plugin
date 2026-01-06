@@ -20,12 +20,12 @@ export class KnoxSettingTab extends PluginSettingTab {
     this.containerEl.empty()
   }
 
-  async displayAsync() {
+  display() {
     this.clear()
 
-    new Setting(this.containerEl).setName('Knox Portal Host').addText((text) =>
+    new Setting(this.containerEl).setName('Knox portal host').addText((text) =>
       text
-        .setPlaceholder('Enter Knox Portal Host')
+        .setPlaceholder('Enter knox portal host')
         .setValue(this.plugin.settings.host)
         .onChange((value) => {
           event.emit('saveSettings', { host: value })
@@ -69,10 +69,6 @@ export class KnoxSettingTab extends PluginSettingTab {
             event.emit('saveSettings', { onSaveInterval: interval })
           })
       })
-  }
-
-  display() {
-    void this.displayAsync()
   }
 
   hide(): void {

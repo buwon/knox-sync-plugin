@@ -236,7 +236,7 @@ export class KnoxProvider implements BaseProviderType {
       return null
     }
 
-    const [mTime, itemStatus, cTime, size, content] = data
+    const [mTime, , cTime, size, content] = data
     const status = task.status === 'COMPLETED' ? 'D' : 'N'
 
     const info: ProviderItemInfoType = {
@@ -268,13 +268,13 @@ export class KnoxProvider implements BaseProviderType {
     return info
   }
 
-  async downloadFile(key: string): Promise<ArrayBuffer | null> {
+  downloadFile(key: string): Promise<ArrayBuffer | null> {
     const item = this.items[key]
     if (item?.content) {
-      return base64ToArrayBuffer(item.content)
+      return Promise.resolve(base64ToArrayBuffer(item.content))
     }
 
-    return null
+    return Promise.resolve(null)
   }
 
   protected findGroup(key: string): GroupInfoType | null {
