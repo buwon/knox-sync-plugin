@@ -1,4 +1,4 @@
-import { Notice, Plugin, TFile, moment } from 'obsidian'
+import { Notice, Plugin, TFile } from 'obsidian'
 import { event } from '../event'
 import { KnoxSettingTab, KnoxSyncPluginSettings } from './settings'
 import { sync } from '../sync'
@@ -143,9 +143,10 @@ export default class KnoxSyncPlugin extends Plugin {
           void db.state.get('lastSyncTime').then((state) => {
             const lastSyncTime = state?.value ?? 0
             if (lastSyncTime > 0) {
-              statusBarItemEl.setText(
-                `Knox Sync: ${moment.default(lastSyncTime).format('YYYY-MM-DD HH:mm')}`,
-              )
+              const d = new Date(lastSyncTime)
+              const formattedTime = `${d.getFullYear()}-${(d.getMonth() + 1).toString().padStart(2, '0')}-${d.getDate().toString().padStart(2, '0')} ${d.getHours().toString().padStart(2, '0')}:${d.getMinutes().toString().padStart(2, '0')}:${d.getSeconds().toString().padStart(2, '0')}`
+
+              statusBarItemEl.setText(`Knox Sync: ${formattedTime}`)
             }
           })
         }, 10 * 1000),
